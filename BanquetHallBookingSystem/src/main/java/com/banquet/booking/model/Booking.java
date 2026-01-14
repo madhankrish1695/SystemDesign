@@ -1,12 +1,17 @@
 package com.banquet.booking.model;
 
+import java.time.LocalTime;
+import java.util.UUID;
+
 public class Booking {
     public String bookingId;
-    public int start; // minutes from 6 AM
-    public int end;
+    public int roomId;
+    public LocalTime start;
+    public LocalTime end;
 
-    public Booking(String bookingId, int start, int end) {
-        this.bookingId = bookingId;
+    public Booking(int roomId, LocalTime start, LocalTime end) {
+        this.bookingId = UUID.randomUUID().toString();
+        this.roomId = roomId;
         this.start = start;
         this.end = end;
     }

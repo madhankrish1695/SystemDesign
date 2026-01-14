@@ -2,35 +2,37 @@ package com.banquet.booking.bo;
 
 import com.banquet.booking.model.Booking;
 
-import java.util.Comparator;
-import java.util.TreeSet;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Room {
     public int roomId;
-    public TreeSet<Booking> bookings;
+    public List<Booking> bookings;
 
     public Room(int roomId) {
         this.roomId = roomId;
-        this.bookings = new TreeSet<>(Comparator.comparingInt(b -> b.start));
+        this.bookings = new ArrayList<>();
     }
 
-    public boolean canBook(int start, int end) {
-        Booking probe = new Booking("", start, end);
-
-        Booking floor = bookings.floor(probe);
-        if (floor != null && floor.end > start) return false;
-
-        Booking ceiling = bookings.ceiling(probe);
-        if (ceiling != null && ceiling.start < end) return false;
-
+    public boolean canBook(LocalTime start, LocalTime end) {
+        for (Booking booking : bookings) {
+            // overlap check
+            if (!(end.isBefore(booking.start) || start.isAfter(booking.end))) {
+                return false;
+            }
+        }
         return true;
     }
 
-    public void addBooking(Booking booking) {
+    public Booking addBooking(LocalTime start, LocalTime end) {
+        Booking booking = new Booking(roomId, start, end);
         bookings.add(booking);
+        bookings.sort((a, b) -> a.start.compareTo(b.start));
+        return booking;
     }
 
-    public boolean removeBooking(Booking booking) {
-        return bookings.remove(booking);
+    public boolean removeBooking(String bookingId) {
+        return bookings.removeIf(b -> b.bookingId.equals(bookingId));
     }
 }

@@ -1,24 +1,31 @@
 package com.banquet.booking;
 
-import com.banquet.booking.service.BookingService;
-import com.banquet.booking.utils.TimeUtil;
+import com.banquet.booking.model.Booking;
+import com.banquet.booking.service.BookingManager;
+
+import java.time.LocalTime;
 
 public class BookingSystem {
     public static void main(String[] args) {
-        BookingService service = new BookingService(10);
+        BookingManager manager = new BookingManager();
 
-        int start = TimeUtil.toMinutes(6, 0);
-        int end = TimeUtil.toMinutes(7, 0);
+        Booking b1 = manager.bookRoom(
+                LocalTime.of(6, 0),
+                LocalTime.of(8, 0)
+        );
 
-        String bookingId = service.book(start, end);
-        System.out.println("Booked: " + bookingId);
+        Booking b2 = manager.bookRoom(
+                LocalTime.of(9, 0),
+                LocalTime.of(10, 0)
+        );
 
-        boolean updated = service.update(bookingId,
-                TimeUtil.toMinutes(8, 0),
-                TimeUtil.toMinutes(9, 0));
-        System.out.println("Updated: " + updated);
+        manager.cancelBooking(b1.bookingId);
 
-        boolean cancelled = service.cancel(bookingId);
-        System.out.println("Cancelled: " + cancelled);
+        Booking b3 = manager.bookRoom(
+                LocalTime.of(7, 0),
+                LocalTime.of(8, 30)
+        );
+
+        System.out.println("Booking successful in room: " + b3.roomId);
     }
 }
